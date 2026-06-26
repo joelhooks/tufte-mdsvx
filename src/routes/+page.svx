@@ -1,0 +1,134 @@
+<script lang="ts">
+  import FeedbackExport from "$lib/feedback-export.svelte";
+  import FeedbackParagraph from "$lib/feedback-paragraph.svelte";
+  import FlowChart from "$lib/flow-chart.svelte";
+  import MarginNote from "$lib/margin-note.svelte";
+  import PatternCards from "$lib/pattern-cards.svelte";
+  import ReportLayout from "$lib/ReportLayout.svelte";
+  import StatLine from "$lib/stat-line.svelte";
+
+  const pageRef = {
+    run: "example-run",
+    slug: "tufte-mdsvx-example",
+    url: "https://tufte-mdsvx-example.wzrrd.sh/",
+    version: "0.1.0",
+  };
+
+  const feedbackStoragePrefix = "tufte-mdsvx-feedback:";
+
+  const feedbackParagraphs = [
+    "what-this-is",
+    "how-agents-use-it",
+    "feedback-loop",
+    "publish-flow",
+  ];
+
+  const stats = [
+    { label: "Template", value: "Tufte MDSvX" },
+    { label: "Runtime", value: "SvelteKit static" },
+    { label: "Feedback", value: "paragraph IDs" },
+    { label: "Publish", value: "wzrrd" },
+  ];
+
+  const patterns = [
+    {
+      title: "Narrative first",
+      why: "Write the useful story before the evidence dump. Let the page breathe. Use the margin for receipts and caveats.",
+      receipts: [{ label: "AGENTS.md", href: "https://github.com/joelhooks/tufte-mdsvx/blob/main/AGENTS.md" }],
+    },
+    {
+      title: "Stable paragraph feedback",
+      why: "Wrap important paragraphs in FeedbackParagraph with durable ids. The export button gives agents exact anchors to apply edits later.",
+      receipts: [{ label: "feedback", href: "#feedback-export" }],
+    },
+    {
+      title: "Static, shareable, no backend",
+      why: "Build static SvelteKit output, then publish ./build to a wzrrd slug. Keep secrets and private receipts out of public bundles.",
+      receipts: [{ label: "wzrrd", href: "https://wzrrd.sh/" }],
+    },
+  ];
+</script>
+
+<svelte:head>
+  <title>Tufte MDSvX for wzrrd</title>
+  <meta
+    name="description"
+    content="A Tufte-style SvelteKit + MDSvX template for narrative-first wzrrd reports with margin notes and paragraph feedback."
+  />
+  <meta property="og:title" content="Tufte MDSvX for wzrrd" />
+  <meta property="og:description" content="Narrative-first static reports with margin receipts and agent-readable feedback." />
+  <meta property="og:image" content="/og.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap"
+    rel="stylesheet"
+  />
+</svelte:head>
+
+<ReportLayout>
+
+<p class="eyebrow"><span class="mascot" aria-hidden="true">🧙</span><span class="eyebrow-stack"><span>Tufte MDSvX</span><span>Agent-readable reports for wzrrd</span></span></p>
+
+# A quiet page for reports that need proof.
+
+<p class="lead">This template is for field notes, incident reports, project reviews, launch memos, and agent run summaries where prose should lead and receipts should stay close.<MarginNote id="source-grounding" number="1">Use margin notes for source links, caveats, or agent reasoning. Do not shove every receipt into the main paragraph.</MarginNote> It is a static SvelteKit + MDSvX shell meant to be published with <code>wzrrd</code>.</p>
+
+<StatLine items={stats} />
+
+<FeedbackParagraph id="what-this-is" storagePrefix={feedbackStoragePrefix} note="If this paragraph is too abstract, steer it. The bottom export will include this id.">
+  <p>The page should feel like a short, well-lit document. One column. One highlight color. Marginal notes for proof. A few small components where they clarify the work. No dashboard soup. No badge lasagna.</p>
+</FeedbackParagraph>
+
+<FeedbackParagraph id="how-agents-use-it" storagePrefix={feedbackStoragePrefix} note="Agent instructions live in AGENTS.md. Keep the public bundle clean before publishing.">
+  <p>Agents should replace this sample report with the real story, keep paragraph ids stable, and cite real files, logs, links, screenshots, or commands before making claims. Private receipts can be summarized or linked only when the target audience is allowed to see them.<MarginNote id="private-boundary" number="2">Before publishing, grep for secrets, local-only paths, private customer data, and raw transcript snippets. The internet does not need your basement.</MarginNote></p>
+</FeedbackParagraph>
+
+<PatternCards items={patterns} />
+
+<FlowChart
+  src="/report-loop.svg"
+  title="Agentic report loop"
+  caption="Curated facts become prose, prose becomes a static wzrrd page, paragraph feedback becomes the next pass."
+  alt="Diagram showing source receipts flowing into an agent writer, MDSvX, a wzrrd review URL, feedback, and the next pass."
+  version="0.1.0"
+/>
+
+## Feedback that agents can actually use
+
+<FeedbackParagraph id="feedback-loop" storagePrefix={feedbackStoragePrefix} note="The copied payload uses compact keys: p = paragraph id, r = reaction, s = steering text.">
+  <p>Every important paragraph can carry lightweight feedback. Reactions are fast. The steer drawer is for actual direction. The export button turns local browser feedback into compact JSON tied to the page version and paragraph ids, so an agent can apply it without fuzzy matching the prose.</p>
+</FeedbackParagraph>
+
+## Publish flow
+
+<FeedbackParagraph id="publish-flow" storagePrefix={feedbackStoragePrefix} note="The repo can be used directly, or as the source for a registered wzrrd template id.">
+  <p>Run <code>bun install</code>, edit <code>src/routes/+page.svx</code>, run <code>bun run check && bun run build</code>, then publish <code>./build</code> with <code>wzrrd publish --file ./build --slug your-slug --expires-in 7d</code>. If your local wzrrd has this template registered, start with <code>wzrrd init --template joel/tufte-mdsvx --slug your-slug --title "Your title"</code>.</p>
+</FeedbackParagraph>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Component</th><th>Use it for</th><th>Agent rule</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>MarginNote</code></td><td>Receipts, caveats, source notes.</td><td>Short notes only. Link or summarize; do not dump logs.</td></tr>
+      <tr><td><code>FeedbackParagraph</code></td><td>Reviewable prose with stable ids.</td><td>Use durable ids like <code>risk-summary</code>, not generated counters.</td></tr>
+      <tr><td><code>FeedbackExport</code></td><td>Copy all local feedback into JSON.</td><td>Keep <code>pageRef.version</code> current when prose changes.</td></tr>
+      <tr><td><code>FlowChart</code></td><td>D2/SVG diagrams.</td><td>Commit both the source <code>.d2</code> and generated <code>.svg</code>.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<FeedbackExport
+  {...pageRef}
+  paragraphs={feedbackParagraphs}
+  storagePrefix={feedbackStoragePrefix}
+/>
+
+<footer id="feedback-export">
+  Template source: <code>joelhooks/tufte-mdsvx</code>. Replace the sample page before publishing anything serious.
+</footer>
+
+</ReportLayout>
